@@ -1,13 +1,30 @@
-import createError from "http-errors";
-import express from "express";
-import path from "node:path";
 import cookieParser from "cookie-parser";
+import { config } from "dotenv";
+import express from "express";
+import createError from "http-errors";
+import mongoose from "mongoose";
 import logger from "morgan";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-let indexRouter = require("./routes/index");
-let usersRouter = require("./routes/users");
+import authRouter from "./routes/auth.js";
+import indexRouter from "./routes/index.js";
+import usersRouter from "./routes/users.js";
+
+config();
 
 let app = express();
+
+mongoose
+  .connect(process.env.MONGODB_URL)
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
+  });
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -17,21 +34,21 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/auth", authRouter);
 
-// catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   res.render("error");
 });
 
-module.exports = app;
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`hosting on https://localhost:${PORT}`);
+});

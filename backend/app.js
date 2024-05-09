@@ -10,7 +10,7 @@ import cors from "cors";
 
 import authRouter from "./routes/auth.js";
 import indexRouter from "./routes/index.js";
-import usersRouter from "./routes/users.js";
+import userRouter from "./routes/user.js";
 
 dotenv.config();
 
@@ -27,7 +27,12 @@ mongoose
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -35,7 +40,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/user", userRouter);
 app.use("/auth", authRouter);
 
 app.use(function (req, res, next) {

@@ -1,5 +1,5 @@
 import cookieParser from "cookie-parser";
-import { config } from "dotenv";
+import dotenv from "dotenv";
 import express from "express";
 import createError from "http-errors";
 import mongoose from "mongoose";
@@ -11,7 +11,7 @@ import authRouter from "./routes/auth.js";
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
 
-config();
+dotenv.config();
 
 let app = express();
 
@@ -44,8 +44,13 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  res.status(err.status || 500);
-  res.render("error");
+  if (err.status === 404) {
+    res.status(err.status).send("Not Found");
+  } else if (err.status >= 500) {
+    res.status(err.status).send("Internal Server Error");
+  } else {
+    res.status(err.status || 500).send("Something went wrong");
+  }
 });
 
 const PORT = process.env.PORT || 3000;

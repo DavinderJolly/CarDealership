@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import logger from "morgan";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import cors from "cors";
 
 import authRouter from "./routes/auth.js";
 import indexRouter from "./routes/index.js";
@@ -26,6 +27,7 @@ mongoose
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

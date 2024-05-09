@@ -12,7 +12,6 @@ authRouter.post("/signup", async (req, res) => {
   try {
     const { username, password } = req.body;
     const existingUser = await User.findOne({ username }, { password: 0 });
-    console.log(username);
 
     if (existingUser) {
       return res.status(400).json({ message: "Username already exists" });
@@ -34,7 +33,7 @@ authRouter.post("/signup", async (req, res) => {
   }
 });
 
-authRouter.post("/signin", async (req, res) => {
+authRouter.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
     const user = await User.findOne({ username });

@@ -1,110 +1,57 @@
-<script context="module">
-	import { goto } from '$app/navigation';
+<script>
+	import SignupForm from '$lib/components/SignupForm.svelte';
 
-	let username = '';
-	let password = '';
-	let confirmPassword = '';
-	let userExistsError = '';
-	let passwordConfirmError = '';
-
-	async function handleSubmit(event) {
-		event.preventDefault();
-
-		passwordConfirmError = '';
-		userExistsError = '';
-
-		// Check if passwords match
-		if (password !== confirmPassword) {
-			passwordConfirmError = 'Passwords do not match';
-			return;
-		}
-
-		try {
-			const response = await fetch('http://localhost:3000/auth/signup', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ username, password }),
-				credentials: 'include'
-			});
-
-			if (response.ok) {
-				goto('/');
-			} else if (response.status === 400) {
-				userExistsError = 'User already exists';
-			} else {
-				goto('/signup');
-			}
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
+	let type = 'user';
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-	<div class="max-w-md w-full space-y-8">
-		<div>
-			<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Create an account</h2>
-		</div>
-		<form class="mt-8 space-y-6" on:submit={handleSubmit}>
-			<div class="rounded-md shadow-sm -space-y-px">
-				<div>
-					<label for="username" class="sr-only">Username</label>
-					<input
-						id="username"
-						name="username"
-						type="text"
-						autocomplete="username"
-						required
-						class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-						placeholder="Username"
-						bind:value={username}
-					/>
-				</div>
-				<div>
-					<label for="password" class="sr-only">Password</label>
-					<input
-						id="password"
-						name="password"
-						type="password"
-						autocomplete="new-password"
-						required
-						class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-						placeholder="Password"
-						bind:value={password}
-					/>
-				</div>
-				<div>
-					<label for="confirmPassword" class="sr-only">Confirm Password</label>
-					<input
-						id="confirmPassword"
-						name="confirmPassword"
-						type="password"
-						autocomplete="new-password"
-						required
-						class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-						placeholder="Confirm Password"
-						bind:value={confirmPassword}
-					/>
-				</div>
-			</div>
-
-			{#if userExistsError}
-				<p class="text-red-500">{userExistsError}</p>
-			{/if}
-			{#if passwordConfirmError}
-				<p class="text-red-500">{passwordConfirmError}</p>
-			{/if}
-
-			<div>
+<div
+	class="min-h-full flex flex-col items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+>
+	<div class="w-1/2 md:w-96 mb-4 p-5 border rounded-xl border-violet-600">
+		<ul
+			class="flex justify-around -mb-px text-sm font-medium text-center"
+			id="default-styled-tab"
+			data-tabs-toggle="#default-styled-tab-content"
+			data-tabs-active-classes="text-purple-600 hover:text-purple-600 border-purple-600"
+			data-tabs-inactive-classes="text-gray-500 hover:text-gray-600 border-gray-100 hover:border-gray-300a"
+			role="tablist"
+		>
+			<li class="me-2" role="presentation">
 				<button
-					type="submit"
-					class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+					class={`inline-block p-4 border-b-2 rounded-t-lg
+						${type === 'user' ? 'text-violet-600 border-violet-600 hover:border-violet-700 hover:text-violet-700' : 'hover:text-gray-600 hover:border-gray-300'}`}
+					id="dashboard-styled-tab"
+					data-tabs-target="#styled-user"
+					type="button"
+					role="tab"
+					aria-controls="user"
+					aria-selected={type === 'user'}
+					on:click={() => (type = 'user')}
 				>
-					Sign up
+					User
 				</button>
-			</div>
-		</form>
+			</li>
+			<li role="presentation">
+				<button
+					class={`inline-block p-4 border-b-2 rounded-t-l  ${type === 'dealership' ? 'text-violet-600 border-violet-600 hover:border-violet-700 hover:text-violet-700' : 'hover:text-gray-600 hover:border-gray-300'}`}
+					id="contacts-styled-tab"
+					data-tabs-target="#styled-dealership"
+					type="button"
+					role="tab"
+					aria-controls="dealership"
+					aria-selected={type === 'dealership'}
+					on:click={() => (type = 'dealership')}
+				>
+					Dealership
+				</button>
+			</li>
+		</ul>
+
+		<hr />
+		{#if type === 'user'}
+			<SignupForm type="User" />
+		{:else if type === 'dealership'}
+			<SignupForm type="Dealership" />
+		{/if}
 	</div>
 </div>

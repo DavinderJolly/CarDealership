@@ -3,7 +3,9 @@ import jwt from "jsonwebtoken";
 import { User, Dealership } from "../models/index.js";
 
 export function authorizeRoute(req, res, next) {
-  const token = req.cookies.token;
+  const authHeader = req.headers["authorization"];
+
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (token == null) return res.sendStatus(401);
 

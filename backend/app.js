@@ -30,8 +30,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true,
-  }),
+  })
 );
 app.use(logger("dev"));
 app.use(express.json());

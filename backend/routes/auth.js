@@ -25,15 +25,15 @@ authRouter.post("/signup_user", async (req, res) => {
     const newUser = new User({ user_name: name, user_email: email, password });
     await newUser.save();
 
-    res.cookie(
-      "token",
-      jwt.sign({ _id: newUser._id, type: "user" }, ACCESS_TOKEN_SECRET, {
-        expiresIn: "6000s",
-      }),
-      { httpOnly: true }
+    const token = jwt.sign(
+      { _id: newUser._id, type: "user" },
+      ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "1h",
+      }
     );
 
-    res.status(200).json({ message: "Signup successful" });
+    res.json({ token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -55,15 +55,15 @@ authRouter.post("/login_user", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    res.cookie(
-      "token",
-      jwt.sign({ _id: user._id, type: "user" }, ACCESS_TOKEN_SECRET, {
-        expiresIn: "6000s",
-      }),
-      { httpOnly: true }
+    const token = jwt.sign(
+      { _id: user._id, type: "user" },
+      ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "1h",
+      }
     );
 
-    res.status(200).json({ message: "Login successful" });
+    res.json({ token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -91,19 +91,15 @@ authRouter.post("/signup_dealership", async (req, res) => {
     });
     await newDealership.save();
 
-    res.cookie(
-      "token",
-      jwt.sign(
-        { _id: newDealership.id, type: "dealership" },
-        ACCESS_TOKEN_SECRET,
-        {
-          expiresIn: "6000s",
-        }
-      ),
-      { httpOnly: true }
+    const token = jwt.sign(
+      { _id: newDealership._id, type: "dealership" },
+      ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "1h",
+      }
     );
 
-    res.status(200).json({ message: "Signup successful" });
+    res.json({ token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -129,23 +125,24 @@ authRouter.post("/login_dealership", async (req, res) => {
         .json({ message: "Invalid dealership email or password" });
     }
 
-    res.cookie(
-      "token",
-      jwt.sign(
-        { _id: dealership._id, type: "dealership" },
-        ACCESS_TOKEN_SECRET,
-        {
-          expiresIn: "6000s",
-        }
-      ),
-      { httpOnly: true }
+    const token = jwt.sign(
+      { _id: dealership._id, type: "dealership" },
+      ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "1h",
+      }
     );
 
-    res.status(200).json({ message: "Login successful" });
+    res.json({ token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
+});
+
+authRouter.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.status(200).json({ message: "Logout successful" });
 });
 
 export default authRouter;

@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 const isLocalStorageAvailable = typeof localStorage !== 'undefined';
 
@@ -18,7 +19,7 @@ isLoggedIn.subscribe((value) => {
 	if (value) {
 		if (isLocalStorageAvailable) {
 			const token = localStorage.getItem('token');
-			fetch('http://localhost:3000/user', {
+			fetch(`${PUBLIC_BACKEND_URL}/user`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${token}`

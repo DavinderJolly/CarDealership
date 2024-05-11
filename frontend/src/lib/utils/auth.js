@@ -17,26 +17,3 @@ export function logOut() {
 	}
 	return false;
 }
-
-export function getUser() {
-	if (typeof localStorage !== 'undefined') {
-		const token = localStorage.getItem('token');
-
-		let user;
-
-		fetch('http://localhost:3000/user', {
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${token}`
-			}
-		})
-			.then((res) => {
-				return res.json();
-			})
-			.then((data) => {
-				user = data;
-			});
-
-		return user;
-	}
-}
